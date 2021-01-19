@@ -149,17 +149,5 @@ class B_spline_surface:
                 b = b+1
             a = a+1
         ax.plot_surface(new_data[0,0,0,:,:],new_data[1,0,0,:,:],new_data[2,0,0,:,:])
-        px = 60; py = 80;
-        val = new_data[:,0,0,px,py]
-        nu = new_data[:,1,0,px,py]; nv = new_data[:,0,1,px,py];
-        n = np.cross(nu,nv)
-        n /= np.linalg.norm(n)
-        nu /= np.linalg.norm(nu)
-        nv /= np.linalg.norm(nv)
-        line = np.zeros((3,2))
-        line[:,0] = val; line[:,1] = val+n;
-        ax.plot(line[0,:], line[1,:], line[2,:])
-        u,v = np.meshgrid(np.linspace(-0.5,0.5,101),np.linspace(-0.5,0.5,101))
-        ax.plot_surface(u+val[0],v+val[1],(-u*n[0]-v*n[1])/n[2]+val[2])
         
         plt.show()
