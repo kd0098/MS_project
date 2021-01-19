@@ -44,16 +44,5 @@ class nurbs_surface(B_spline_surface):
         ax = plt.axes(projection='3d')
         ax.plot_surface(new_data[0,0,0,:,:],new_data[1,0,0,:,:],new_data[2,0,0,:,:])
         # return new_data
-
-        # tangent plane
-        px = 50; py = 50;
-        nu = new_data[0:3,1,0,px,py]; nv = new_data[0:3,0,1,px,py]; val = new_data[0:3,0,0,px,py]
-        n = np.cross(nu,nv)
-        n /= np.linalg.norm(n)
-        u,v = np.meshgrid(np.linspace(-1,1,101),np.linspace(-1,1,101))
-        ax.plot_surface(u+val[0],v+val[1],(-u*n[0]-v*n[1])/n[2]+val[2])
-        line = np.zeros((3,2))
-        line[:,0] = val; line[:,1] = val+n;
-        ax.plot(line[0,:], line[1,:], line[2,:])
         
         plt.show()
