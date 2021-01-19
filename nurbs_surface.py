@@ -1,7 +1,7 @@
 class nurbs_surface(B_spline_surface):
-    def __init__(self, knot_file1, knot_file2, cp_file, weight, deg_file1, deg_file2):
-        B_spline_surface.__init__(self, knot_file1, knot_file2, cp_file, deg_file1, deg_file2)
-        self.weight = np.load(weight).reshape(self.control_points[0].shape)
+    def __init__(self, cp, weight, n, m, deru=2, derv=2, deg1=3, deg2=3):
+        B_spline_surface.__init__(self, cp, n, m, deru, derv, deg1, deg2)
+        self.weight = weight.reshape(self.control_points[0].shape)
         self.control_points *= self.weight
         self.control_points = np.append(self.control_points, [self.weight], axis = 0)
     
@@ -55,9 +55,5 @@ class nurbs_surface(B_spline_surface):
         line = np.zeros((3,2))
         line[:,0] = val; line[:,1] = val+n;
         ax.plot(line[0,:], line[1,:], line[2,:])
-    
-        #scatter plot
-        # t = self.control_points
-        # ax.scatter(t[0,:],t[1,:],t[2,:])
         
         plt.show()
