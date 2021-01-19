@@ -1,13 +1,10 @@
 class B_spline:
-    def __init__(self, knot_file, cp_file, deg_file):
-        self.knot = np.genfromtxt(knot_file, delimiter=' ')
-        self.degree = int(np.genfromtxt(deg_file, delimiter=' '))
-        d = self.degree
-
-        self.knot = [0 for i in range(0,d+1)] + self.knot.tolist() + [1 for i in range(0,d+1)]
-        # self.control_points = pd.DataFrame(np.genfromtxt(cp_file, delimiter=' ')).T 
-        self.control_points = np.transpose(np.genfromtxt(cp_file, delimiter=' '))
-
+    def __init__(self, cp, deg=3):
+        self.degree = deg
+        self.control_points = cp
+        n = self.control_points.shape[1]
+        self.knot = [0 for i in range(0,deg)] + np.linspace(0,1,n-deg+1).tolist() + [1 for i in range(0,deg)]
+        
 
     def find_knot(self, u):
         l = len(self.knot)
@@ -43,17 +40,16 @@ class B_spline:
 
 
     def plot_data(self,n=100):
-        t = self.control_points
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        cnt = 0
         data = np.zeros((n+1,3))
-        j = 0
         for i in np.linspace(0,1,n+1):
-            # data.insert(0,i,self.evaluate(i).tolist())
-            data[j] = self.evaluate(i)
-            j = j+1
+            data[cnt] = self.evaluate(i)
+            cnt = cnt+1
+        
+        fig = plt.figure()
         ax = plt.axes(projection='3d')
-        ax.plot(data[:,0],data[:,1], data[:,2])
+        ax.plot3D(data[:,0],data[:,1], data[:,2])
+        # ax.plot3D(data[:,0],data[:,1], data[:,2],'ro')
+        ax.plot3D(self.control_points[0,:],self.control_points[1,:],self.control_points[2,:],'ro')
 
-        ax.scatter(t[0,:],t[1,:],t[2,:])
         plt.show()
