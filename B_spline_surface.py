@@ -1,22 +1,13 @@
 class B_spline_surface:
-    def __init__(self, knot_file1, knot_file2, cp_file, deg_file1, deg_file2):
-        # self.knot1 = np.genfromtxt(knot_file1, delimiter=' ')
-        # self.knot2 = np.genfromtxt(knot_file2, delimiter=' ')
-        # self.degree1 = int(np.genfromtxt(deg_file1, delimiter=' '))
-        # self.degree2 = int(np.genfromtxt(deg_file2, delimiter=' '))
-        # self.control_points = np.genfromtxt(cp_file, delimiter=' ')
-        self.knot1 = np.load(knot_file1)
-        self.knot2 = np.load(knot_file2)
-        self.degree1 = int(np.load(deg_file1))
-        self.degree2 = int(np.load(deg_file2))
-        self.control_points = np.load(cp_file)
-        self.der_requ = 2
-        self.der_reqv = 2
-        self.reshape(self.knot1.shape[0]+self.degree1+1, self.knot1.shape[0]+self.degree1+1)
-        d = self.degree1
-        self.knot1 = [0 for i in range(0,d+1)] + self.knot1.tolist() + [1 for i in range(0,d+1)]
-        d = self.degree2
-        self.knot2 = [0 for i in range(0,d+1)] + self.knot2.tolist() + [1 for i in range(0,d+1)]
+    def __init__(self, cp, n, m, deru=2, derv=2, deg1=3, deg2=3):
+        self.degree1 = deg1
+        self.degree2 = deg2
+        self.control_points = cp
+        self.der_requ = deru
+        self.der_reqv = derv
+        self.reshape(n, m)
+        self.knot1 = [0 for i in range(0,deg1)] + np.linspace(0,1,n-deg1+1).tolist() + [1 for i in range(0,deg1)]
+        self.knot2 = [0 for i in range(0,deg2)] + np.linspace(0,1,m-deg2+1).tolist() + [1 for i in range(0,deg2)]
 
 
     def reshape(self, n, m):
@@ -33,8 +24,6 @@ class B_spline_surface:
         self.control_points[0] = t0
         self.control_points[1] = t1
         self.control_points[2] = t2
-        # [t0,t1,t2]
-        return 
 
 
     def find_knot(self, dir, u):
@@ -157,7 +146,6 @@ class B_spline_surface:
                 [x0,basisX] = self.evaluate_basis_derivatives('x',i)
                 [y0,basisY] = self.evaluate_basis_derivatives('y',j)
                 new_data[:,:,:,a,b] = np.matmul(basisX,np.matmul(cp[:,x0-d1:x0+1,y0-d2:y0+1],basisY.T))
-                # new_data[:,:,:,a,b] = np.matmul(basisX.T,np.matmul(cp[:,x0-d1:x0+1,y0-d2:y0+1],basisY))
                 b = b+1
             a = a+1
         ax.plot_surface(new_data[0,0,0,:,:],new_data[1,0,0,:,:],new_data[2,0,0,:,:])
@@ -171,7 +159,7 @@ class B_spline_surface:
         line = np.zeros((3,2))
         line[:,0] = val; line[:,1] = val+n;
         ax.plot(line[0,:], line[1,:], line[2,:])
-        u,v = np.meshgrid(np.linspace(-1,1,101),np.linspace(-1,1,101))
+        u,v = np.meshgrid(np.linspace(-0.5,0.5,101),np.linspace(-0.5,0.5,101))
         ax.plot_surface(u+val[0],v+val[1],(-u*n[0]-v*n[1])/n[2]+val[2])
         
         plt.show()
